@@ -12,24 +12,26 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "titles")
-@Getter @Setter
+@Getter @Setter 
+@ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 public class TitleEntity extends BaseEntity {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ToString.Include
 	@Column(name = "id")
 	private Long id;
-	
-	@Column(name = "name")
+
+	@ToString.Include
+	@Column(name = "name", unique = true)
 	private String name;
-	
-	@Column(name = "actors")
-	private List<String> actors;
-	
+
+	@ToString.Include
 	@Column(name = "releaseYear")
 	private Integer releaseYear;
 

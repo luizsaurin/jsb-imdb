@@ -6,4 +6,5 @@ import com.example.imdb.entity.TitleEntity;
 
 public interface TitleRepository extends JpaRepository<TitleEntity, Long> {
 	
+	boolean existsByName(String name);
 }

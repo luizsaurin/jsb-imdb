@@ -1,6 +1,6 @@
 spring:
   application:
-    name: jpa
+    name: imdb
   output:
     ansi:
       enabled: always
@@ -11,7 +11,10 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
+
+server:
+  port: 5000
 
 logging:
   pattern:
