@@ -15,7 +15,7 @@ import lombok.Setter;
 @Table(name = "reviews")
 @Getter @Setter
 @NoArgsConstructor
-public class ReviewEntity {
+public class ReviewEntity extends BaseEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

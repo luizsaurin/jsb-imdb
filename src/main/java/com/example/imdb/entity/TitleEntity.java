@@ -17,7 +17,7 @@ import lombok.Setter;
 @Table(name = "titles")
 @Getter @Setter
 @NoArgsConstructor
-public class TitleEntity {
+public class TitleEntity extends BaseEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
