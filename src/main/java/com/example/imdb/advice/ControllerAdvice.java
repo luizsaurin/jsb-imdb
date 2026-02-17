@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.imdb.advice.exception.BadRequestException;
-import com.example.imdb.dto.error.ApiErrorResponseDTO;
+import com.example.imdb.dto.ApiErrorResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 

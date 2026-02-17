@@ -1,4 +1,4 @@
-package com.example.imdb.dto.error;
+package com.example.imdb.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
