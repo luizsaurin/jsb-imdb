@@ -2,6 +2,8 @@ package com.example.imdb.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,5 +25,10 @@ public class TitleController {
 	@PostMapping(URIs.CREATE_TITLE)
 	public ResponseEntity<CreateTitleResponseDTO> create(@RequestBody @Valid CreateTitleRequestDTO request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(titleService.create(request));
+	}
+
+	@GetMapping(URIs.FIND_TITLE_BY_ID)
+	public ResponseEntity<CreateTitleResponseDTO> findById(@PathVariable Long id) {
+		return ResponseEntity.ok(titleService.findById(id));
 	}
 }

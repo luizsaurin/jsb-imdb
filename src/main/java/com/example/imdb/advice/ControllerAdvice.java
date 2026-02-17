@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.imdb.advice.exception.BadRequestException;
+import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.ApiErrorResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,11 @@ public class ControllerAdvice {
 		String message = firstError.getField() + ": " + firstError.getDefaultMessage();
 
 		return ResponseEntity.badRequest().body(ApiErrorResponseDTO.builder().message(message).build());
+	}
+
+	@ExceptionHandler(NotFoundException.class)
+	public ResponseEntity<ApiErrorResponseDTO> handleNotFoundException() {
+		return ResponseEntity.notFound().build();
 	}
 
 }

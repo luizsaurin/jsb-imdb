@@ -1,8 +1,11 @@
 package com.example.imdb.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.example.imdb.advice.exception.BadRequestException;
+import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.title.request.CreateTitleRequestDTO;
 import com.example.imdb.dto.title.response.CreateTitleResponseDTO;
 import com.example.imdb.entity.TitleEntity;
@@ -36,8 +39,27 @@ public class TitleService {
 		log.info("[INFO] Saved entity: {}", newEntity);
 
 		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(savedEntity);
-		log.info("[END] Response dto: {}", response);
+		log.info("[END] Response: {}", response);
+		
+		return response;
+	}
+	
+	public CreateTitleResponseDTO findById(Long id) {
+		log.info("[START] Searching Title with id [{}]", id);
+		
+		Optional<TitleEntity> optional = titleRepository.findById(id);
+		
+		if (optional.isEmpty()) {
+			log.info("[END] Title with id [{}] not found", id);
+			throw new NotFoundException();
+		}
 
+		TitleEntity titleEntity = optional.get();
+		log.info("[INFO] Found entity: {}", titleEntity);
+
+		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(titleEntity);
+		log.info("[END] Response: {}", response);
+		
 		return response;
 	}
 }
