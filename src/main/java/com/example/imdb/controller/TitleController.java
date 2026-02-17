@@ -1,5 +1,7 @@
 package com.example.imdb.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -31,6 +33,11 @@ public class TitleController {
 	@PostMapping(URIs.CREATE_TITLE)
 	public ResponseEntity<CreateTitleResponseDTO> create(@RequestBody @Valid CreateTitleRequestDTO request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(titleService.create(request));
+	}
+
+	@PostMapping(URIs.CREATE_TITLES)
+	public ResponseEntity<List<CreateTitleResponseDTO>> createMany(@RequestBody @Valid List<CreateTitleRequestDTO> request) {
+		return ResponseEntity.ok(titleService.createMany(request));
 	}
 
 	@GetMapping(URIs.FIND_TITLE_BY_ID)

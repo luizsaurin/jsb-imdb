@@ -1,5 +1,7 @@
 package com.example.imdb.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -28,6 +30,35 @@ public class TitleService {
 	private final TitleRepository titleRepository;
 	private final TitleMapper titleMapper;
 	
+	public List<CreateTitleResponseDTO> createMany(List<CreateTitleRequestDTO> requestList) {
+		log.info("[START] Creating titles with data: {}", requestList);
+
+		if (requestList == null || requestList.isEmpty()) {
+			String message = "Request list is null or empty";
+			log.info("[END] {}", message);
+			throw new BadRequestException(message);
+		}
+
+		List<CreateTitleResponseDTO> response = new ArrayList<>();
+
+		requestList.forEach(item -> { 
+			CreateTitleResponseDTO createdTitle = null;
+
+			try {
+				createdTitle = create(item);
+			} catch (Exception _) {
+				log.info("[INFO] Could create title {}, skipping to next one", item);
+			}
+
+			if (createdTitle != null) response.add(createdTitle);
+		});
+
+		log.info("[END] {} records created", response.size());
+
+
+		return response;
+	}
+
 	public CreateTitleResponseDTO create(CreateTitleRequestDTO request) {
 		log.info("[START] Creating title with data: {}", request);
 
@@ -38,10 +69,8 @@ public class TitleService {
 		}
 
 		TitleEntity newEntity = titleMapper.toTitleEntity(request);
-		log.info("[INFO] Created entity: {}", newEntity);
 		
 		TitleEntity savedEntity = titleRepository.save(newEntity);
-		log.info("[INFO] Saved entity: {}", newEntity);
 
 		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(savedEntity);
 		log.info("[END] Response: {}", response);
@@ -60,7 +89,6 @@ public class TitleService {
 		}
 		
 		TitleEntity titleEntity = optional.get();
-		log.info("[INFO] Found entity: {}", titleEntity);
 		
 		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(titleEntity);
 		log.info("[END] Response: {}", response);
