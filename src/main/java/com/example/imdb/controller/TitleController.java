@@ -36,8 +36,9 @@ public class TitleController {
 	}
 
 	@PostMapping(URIs.CREATE_TITLES)
-	public ResponseEntity<List<CreateTitleResponseDTO>> createMany(@RequestBody @Valid List<CreateTitleRequestDTO> request) {
-		return ResponseEntity.ok(titleService.createMany(request));
+	public ResponseEntity<Void> createMany(@RequestBody @Valid List<CreateTitleRequestDTO> request) {
+		titleService.createMany(request);
+		return ResponseEntity.accepted().build();
 	}
 
 	@GetMapping(URIs.FIND_TITLE_BY_ID)

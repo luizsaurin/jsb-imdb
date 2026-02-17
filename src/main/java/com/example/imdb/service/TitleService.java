@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.example.imdb.advice.exception.BadRequestException;
@@ -30,33 +31,41 @@ public class TitleService {
 	private final TitleRepository titleRepository;
 	private final TitleMapper titleMapper;
 	
-	public List<CreateTitleResponseDTO> createMany(List<CreateTitleRequestDTO> requestList) {
+	@Async
+	public void createMany(List<CreateTitleRequestDTO> requestList) {
 		log.info("[START] Creating titles with data: {}", requestList);
 
 		if (requestList == null || requestList.isEmpty()) {
-			String message = "Request list is null or empty";
-			log.info("[END] {}", message);
-			throw new BadRequestException(message);
+			log.info("[END] Request list is null or empty");
+			return;
 		}
 
-		List<CreateTitleResponseDTO> response = new ArrayList<>();
+		List<TitleEntity> entitiesToSave = new ArrayList<>();
+
+		log.info("[INFO] Titles with existing names will be removed from the list");
 
 		requestList.forEach(item -> { 
-			CreateTitleResponseDTO createdTitle = null;
 
-			try {
-				createdTitle = create(item);
-			} catch (Exception _) {
-				log.info("[INFO] Could create title {}, skipping to next one", item);
+			if (titleRepository.existsByName(item.getName())) {
+				return;
 			}
 
-			if (createdTitle != null) response.add(createdTitle);
+			TitleEntity titleEntity = titleMapper.toTitleEntity(item);
+
+			entitiesToSave.add(titleEntity);
 		});
 
-		log.info("[END] {} records created", response.size());
+		
+		if (entitiesToSave == null || entitiesToSave.isEmpty()) {
+			log.info("[END] No title left to save");
+			return;
+		}
+		
+		log.info("[INFO] Titles to be saved {}", entitiesToSave);
 
+		titleRepository.saveAll(entitiesToSave);
 
-		return response;
+		log.info("[END] {} records saved", entitiesToSave.size());
 	}
 
 	public CreateTitleResponseDTO create(CreateTitleRequestDTO request) {
