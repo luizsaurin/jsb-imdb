@@ -2,15 +2,20 @@ package com.example.imdb.service;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.imdb.advice.exception.BadRequestException;
 import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.title.request.CreateTitleRequestDTO;
 import com.example.imdb.dto.title.response.CreateTitleResponseDTO;
+import com.example.imdb.dto.title.response.FindAllTitlesResponseDTO;
 import com.example.imdb.entity.TitleEntity;
 import com.example.imdb.mapper.TitleMapper;
 import com.example.imdb.repository.TitleRepository;
+import com.example.imdb.specification.TitleSpecifications;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,13 +58,33 @@ public class TitleService {
 			log.info("[END] Title with id [{}] not found", id);
 			throw new NotFoundException();
 		}
-
+		
 		TitleEntity titleEntity = optional.get();
 		log.info("[INFO] Found entity: {}", titleEntity);
-
+		
 		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(titleEntity);
 		log.info("[END] Response: {}", response);
 		
 		return response;
 	}
+	
+	public Page<FindAllTitlesResponseDTO> findAll(Pageable pageable, String name, Integer releaseYearGte, 
+		Integer releaseYearLte) {
+		log.info("[START] Searching Titles with {} and params name [{}], releaseYearGte [{}], releaseYearLte [{}]", 
+		pageable, name, releaseYearGte, releaseYearLte);
+
+		Specification<TitleEntity> spec = Specification.allOf(
+			TitleSpecifications.nameContains(name),
+			TitleSpecifications.releaseYearGte(releaseYearGte),
+			TitleSpecifications.releaseYearLte(releaseYearLte)
+		);
+
+		Page<FindAllTitlesResponseDTO> page = titleRepository.findAll(spec, pageable)
+			.map(titleMapper::toFindAllTitlesResponseDTO);
+		
+		log.info("[END] Found {} records", page.getTotalElements());
+
+		return page;
+	}
+	
 }

@@ -8,4 +8,5 @@ public class URIs {
 
 	public static final String CREATE_TITLE = "/titles";
 	public static final String FIND_TITLE_BY_ID = "/titles/{id}";
+	public static final String FIND_ALL_TITLES = "/titles";
 }
