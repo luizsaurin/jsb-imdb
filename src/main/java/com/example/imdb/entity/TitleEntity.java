@@ -15,10 +15,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
+@Getter 
+@Setter 
 @Table(name = "titles")
-@Getter @Setter 
-@ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
+@ToString(onlyExplicitlyIncluded = true)
 public class TitleEntity extends BaseEntity {
 
 	@Id
