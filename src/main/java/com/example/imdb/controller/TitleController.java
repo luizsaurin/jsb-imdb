@@ -11,12 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.imdb.constant.URIs;
 import com.example.imdb.dto.title.request.CreateTitleRequestDTO;
+import com.example.imdb.dto.title.request.UpdateTitleRequestDTO;
 import com.example.imdb.dto.title.response.CreateTitleResponseDTO;
 import com.example.imdb.dto.title.response.FindAllTitlesResponseDTO;
 import com.example.imdb.service.TitleService;
@@ -53,5 +55,11 @@ public class TitleController {
 		@RequestParam(required = false) Integer releaseYearLte,
 		@PageableDefault(sort = "id", direction = Direction.DESC, page = 0, size = 10) Pageable pageable) {
 		return ResponseEntity.ok(titleService.findAll(pageable, name, releaseYearGte, releaseYearLte));
+	}
+
+	@PutMapping(URIs.UPDATE_TITLE)
+	public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UpdateTitleRequestDTO request) {
+		titleService.update(id, request);
+		return ResponseEntity.noContent().build();
 	}
 }

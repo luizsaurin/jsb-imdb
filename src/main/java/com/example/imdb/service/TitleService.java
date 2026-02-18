@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.example.imdb.advice.exception.BadRequestException;
 import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.title.request.CreateTitleRequestDTO;
+import com.example.imdb.dto.title.request.UpdateTitleRequestDTO;
 import com.example.imdb.dto.title.response.CreateTitleResponseDTO;
 import com.example.imdb.dto.title.response.FindAllTitlesResponseDTO;
 import com.example.imdb.entity.TitleEntity;
@@ -50,9 +51,7 @@ public class TitleService {
 				return;
 			}
 
-			TitleEntity titleEntity = titleMapper.toTitleEntity(item);
-
-			entitiesToSave.add(titleEntity);
+			entitiesToSave.add(titleMapper.toTitleEntity(item));
 		});
 
 		
@@ -77,11 +76,8 @@ public class TitleService {
 			throw new BadRequestException(message);
 		}
 
-		TitleEntity newEntity = titleMapper.toTitleEntity(request);
-		
-		TitleEntity savedEntity = titleRepository.save(newEntity);
-
-		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(savedEntity);
+		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(
+			titleRepository.save(titleMapper.toTitleEntity(request)));
 		log.info("[END] Response: {}", response);
 		
 		return response;
@@ -97,9 +93,7 @@ public class TitleService {
 			throw new NotFoundException();
 		}
 		
-		TitleEntity titleEntity = optional.get();
-		
-		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(titleEntity);
+		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(optional.get());
 		log.info("[END] Response: {}", response);
 		
 		return response;
@@ -122,6 +116,19 @@ public class TitleService {
 		log.info("[END] Found {} records", page.getTotalElements());
 
 		return page;
+	}
+
+	public void update(Long id, UpdateTitleRequestDTO request) {
+		log.info("[START] Updating Title id [{}] with data {}", id, request);
+
+		Optional<TitleEntity> optional = titleRepository.findById(id);
+
+		if (optional.isEmpty()) {
+			log.info("[END] Title with id [{}] not found", id);
+			throw new NotFoundException();
+		}
+
+		titleRepository.save(titleMapper.toTitleEntity(optional.get(), request));
 	}
 	
 }
