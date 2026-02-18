@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,6 +61,12 @@ public class TitleController {
 	@PutMapping(URIs.UPDATE_TITLE)
 	public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UpdateTitleRequestDTO request) {
 		titleService.update(id, request);
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping(URIs.DELETE_TITLE)
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		titleService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 }

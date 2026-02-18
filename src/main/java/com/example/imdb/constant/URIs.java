@@ -11,4 +11,5 @@ public class URIs {
 	public static final String FIND_TITLE_BY_ID = "/titles/{id}";
 	public static final String FIND_ALL_TITLES = "/titles";
 	public static final String UPDATE_TITLE = "/titles/{id}";
+	public static final String DELETE_TITLE = "/titles/{id}";
 }

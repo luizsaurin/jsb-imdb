@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("java:S1192")
 public class TitleService {
 
 	private final TitleRepository titleRepository;
@@ -129,6 +130,17 @@ public class TitleService {
 		}
 
 		titleRepository.save(titleMapper.toTitleEntity(optional.get(), request));
+	}
+
+	public void delete(Long id) {
+		log.info("[START] Deleting Title id [{}]", id);
+
+		if (!titleRepository.existsById(id)) {
+			log.info("[END] Title with id [{}] not found", id);
+			throw new NotFoundException();
+		}
+
+		titleRepository.deleteById(id);
 	}
 	
 }
