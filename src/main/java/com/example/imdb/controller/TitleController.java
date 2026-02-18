@@ -22,6 +22,7 @@ import com.example.imdb.dto.title.request.CreateTitleRequestDTO;
 import com.example.imdb.dto.title.request.UpdateTitleRequestDTO;
 import com.example.imdb.dto.title.response.CreateTitleResponseDTO;
 import com.example.imdb.dto.title.response.FindAllTitlesResponseDTO;
+import com.example.imdb.dto.title.response.UpdateTitleResponseDTO;
 import com.example.imdb.service.TitleService;
 
 import jakarta.validation.Valid;
@@ -59,9 +60,9 @@ public class TitleController {
 	}
 
 	@PutMapping(URIs.UPDATE_TITLE)
-	public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UpdateTitleRequestDTO request) {
-		titleService.update(id, request);
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<UpdateTitleResponseDTO> update(
+		@PathVariable Long id, @RequestBody UpdateTitleRequestDTO request) {
+		return ResponseEntity.ok(titleService.update(id, request));
 	}
 
 	@DeleteMapping(URIs.DELETE_TITLE)

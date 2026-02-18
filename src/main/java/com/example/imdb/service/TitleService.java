@@ -16,6 +16,7 @@ import com.example.imdb.dto.title.request.CreateTitleRequestDTO;
 import com.example.imdb.dto.title.request.UpdateTitleRequestDTO;
 import com.example.imdb.dto.title.response.CreateTitleResponseDTO;
 import com.example.imdb.dto.title.response.FindAllTitlesResponseDTO;
+import com.example.imdb.dto.title.response.UpdateTitleResponseDTO;
 import com.example.imdb.entity.TitleEntity;
 import com.example.imdb.mapper.TitleMapper;
 import com.example.imdb.repository.TitleRepository;
@@ -52,7 +53,7 @@ public class TitleService {
 				return;
 			}
 
-			entitiesToSave.add(titleMapper.toTitleEntity(item));
+			entitiesToSave.add(titleMapper.toEntity(item));
 		});
 
 		
@@ -78,7 +79,7 @@ public class TitleService {
 		}
 
 		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(
-			titleRepository.save(titleMapper.toTitleEntity(request)));
+			titleRepository.save(titleMapper.toEntity(request)));
 		log.info("[END] Response: {}", response);
 		
 		return response;
@@ -119,7 +120,7 @@ public class TitleService {
 		return page;
 	}
 
-	public void update(Long id, UpdateTitleRequestDTO request) {
+	public UpdateTitleResponseDTO update(Long id, UpdateTitleRequestDTO request) {
 		log.info("[START] Updating Title id [{}] with data {}", id, request);
 
 		Optional<TitleEntity> optional = titleRepository.findById(id);
@@ -129,7 +130,11 @@ public class TitleService {
 			throw new NotFoundException();
 		}
 
-		titleRepository.save(titleMapper.toTitleEntity(optional.get(), request));
+		UpdateTitleResponseDTO response = titleMapper.toUpdateTitleResponseDTO(
+			titleRepository.save(titleMapper.toEntity(optional.get(), request)));
+		log.info("[END] Response: {}", response);
+		
+		return response;
 	}
 
 	public void delete(Long id) {
