@@ -15,8 +15,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter 
-@Setter 
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "titles")
 @ToString(onlyExplicitlyIncluded = true)

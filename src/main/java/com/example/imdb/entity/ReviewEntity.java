@@ -14,24 +14,24 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter 
-@Setter 
+@Getter
+@Setter
 @NoArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-@Table(name = "reviews", uniqueConstraints = @UniqueConstraint(columnNames = {"email", "title_id"}))
+@Table(name = "reviews", uniqueConstraints = @UniqueConstraint(columnNames = { "email", "title_id" }))
 public class ReviewEntity extends BaseEntity {
-	
+
 	@Id
 	@ToString.Include
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@ToString.Include
 	private String email;
-	
+
 	@ToString.Include
 	private Integer rating;
-	
+
 	@ToString.Include
 	private String description;
 
