@@ -6,4 +6,5 @@ import com.example.imdb.entity.ReviewEntity;
 
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
 	
+	boolean existsByEmailAndTitle_Id(String email, Long titleId);
 }

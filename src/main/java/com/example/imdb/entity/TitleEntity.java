@@ -17,23 +17,22 @@ import lombok.ToString;
 @Entity
 @Getter 
 @Setter 
-@Table(name = "titles")
 @NoArgsConstructor
+@Table(name = "titles")
 @ToString(onlyExplicitlyIncluded = true)
 public class TitleEntity extends BaseEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@ToString.Include
-	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ToString.Include
-	@Column(name = "name", unique = true)
+	@Column(unique = true)
 	private String name;
 
 	@ToString.Include
-	@Column(name = "releaseYear")
+	@Column(name = "release_year")
 	private Integer releaseYear;
 
 	@OneToMany(mappedBy = "title")

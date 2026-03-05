@@ -1,12 +1,13 @@
 package com.example.imdb.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,29 +16,26 @@ import lombok.ToString;
 @Entity
 @Getter 
 @Setter 
-@Table(name = "reviews")
 @NoArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
+@Table(name = "reviews", uniqueConstraints = @UniqueConstraint(columnNames = {"email", "title_id"}))
 public class ReviewEntity extends BaseEntity {
 	
 	@Id
 	@ToString.Include
-	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@ToString.Include
-	@Column(name = "user_name", unique = true)
-	private String userName;
+	private String email;
 	
 	@ToString.Include
-	@Column(name = "rating")
 	private Integer rating;
 	
 	@ToString.Include
-	@Column(name = "description")
 	private String description;
 
 	@ManyToOne
+	@JoinColumn(name = "title_id")
 	private TitleEntity title;
 }
