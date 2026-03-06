@@ -14,4 +14,5 @@ public class URIs {
 	public static final String DELETE_TITLE = "/titles/{id}";
 	
 	public static final String CREATE_REVIEW = "/reviews";
+	public static final String FIND_REVIEW_BY_ID = "/reviews/{id}";
 }

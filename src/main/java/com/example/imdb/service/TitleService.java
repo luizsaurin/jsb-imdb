@@ -45,8 +45,6 @@ public class TitleService {
 
 		List<TitleEntity> entitiesToSave = new ArrayList<>();
 
-		log.info("[INFO] Titles with existing names will be removed from the list");
-
 		requestList.forEach(item -> { 
 
 			if (titleRepository.existsByName(item.getName())) {
@@ -62,8 +60,6 @@ public class TitleService {
 			return;
 		}
 		
-		log.info("[INFO] Titles to be saved {}", entitiesToSave);
-
 		titleRepository.saveAll(entitiesToSave);
 
 		log.info("[END] {} records saved", entitiesToSave.size());

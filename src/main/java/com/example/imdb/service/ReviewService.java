@@ -5,8 +5,11 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.imdb.advice.exception.BadRequestException;
+import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.review.request.CreateReviewRequestDTO;
 import com.example.imdb.dto.review.response.CreateReviewResponseDTO;
+import com.example.imdb.dto.review.response.FindReviewByIdResponseDTO;
+import com.example.imdb.entity.ReviewEntity;
 import com.example.imdb.entity.TitleEntity;
 import com.example.imdb.mapper.ReviewMapper;
 import com.example.imdb.repository.ReviewRepository;
@@ -46,6 +49,22 @@ public class ReviewService {
 			reviewRepository.save(reviewMapper.toEntity(request, optionalTitle.get())));
 		log.info("[END] Response: {}", response);
 
+		return response;
+	}
+
+	public FindReviewByIdResponseDTO findById(Long id) {
+		log.info("[START] Searching review with id [{}]", id);
+		
+		Optional<ReviewEntity> optional = reviewRepository.findById(id);
+		
+		if (optional.isEmpty()) {
+			log.info("[END] Review with id [{}] not found", id);
+			throw new NotFoundException();
+		}
+		
+		FindReviewByIdResponseDTO response = reviewMapper.toFindReviewByIdResponseDTO(optional.get());
+		log.info("[END] Response: {}", response);
+		
 		return response;
 	}
 }
