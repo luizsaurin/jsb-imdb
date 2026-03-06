@@ -22,6 +22,7 @@ import com.example.imdb.dto.title.request.CreateTitleRequestDTO;
 import com.example.imdb.dto.title.request.UpdateTitleRequestDTO;
 import com.example.imdb.dto.title.response.CreateTitleResponseDTO;
 import com.example.imdb.dto.title.response.FindAllTitlesResponseDTO;
+import com.example.imdb.dto.title.response.FindTitleByIdResponseDTO;
 import com.example.imdb.dto.title.response.UpdateTitleResponseDTO;
 import com.example.imdb.service.TitleService;
 
@@ -46,7 +47,7 @@ public class TitleController {
 	}
 
 	@GetMapping(URIs.FIND_TITLE_BY_ID)
-	public ResponseEntity<CreateTitleResponseDTO> findById(@PathVariable Long id) {
+	public ResponseEntity<FindTitleByIdResponseDTO> findById(@PathVariable Long id) {
 		return ResponseEntity.ok(titleService.findById(id));
 	}
 

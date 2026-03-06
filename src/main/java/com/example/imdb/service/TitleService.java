@@ -16,6 +16,7 @@ import com.example.imdb.dto.title.request.CreateTitleRequestDTO;
 import com.example.imdb.dto.title.request.UpdateTitleRequestDTO;
 import com.example.imdb.dto.title.response.CreateTitleResponseDTO;
 import com.example.imdb.dto.title.response.FindAllTitlesResponseDTO;
+import com.example.imdb.dto.title.response.FindTitleByIdResponseDTO;
 import com.example.imdb.dto.title.response.UpdateTitleResponseDTO;
 import com.example.imdb.entity.TitleEntity;
 import com.example.imdb.mapper.TitleMapper;
@@ -81,7 +82,7 @@ public class TitleService {
 		return response;
 	}
 	
-	public CreateTitleResponseDTO findById(Long id) {
+	public FindTitleByIdResponseDTO findById(Long id) {
 		log.info("[START] Searching Title with id [{}]", id);
 		
 		Optional<TitleEntity> optional = titleRepository.findById(id);
@@ -91,7 +92,7 @@ public class TitleService {
 			throw new NotFoundException();
 		}
 		
-		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(optional.get());
+		FindTitleByIdResponseDTO response = titleMapper.toFindTitleByIdResponseDTO(optional.get());
 		log.info("[END] Response: {}", response);
 		
 		return response;
