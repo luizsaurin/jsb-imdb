@@ -1,5 +1,6 @@
 package com.example.imdb.advice;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -7,7 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.imdb.advice.exception.BadRequestException;
+import com.example.imdb.advice.exception.DuplicatedResourceException;
 import com.example.imdb.advice.exception.NotFoundException;
+import com.example.imdb.constant.ErrorMessages;
 import com.example.imdb.dto.ApiErrorResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +37,7 @@ public class ControllerAdvice {
 
 		if (firstError == null) {
             return ResponseEntity.badRequest().body(
-				ApiErrorResponseDTO.builder().message("Validation failed").build());
+				ApiErrorResponseDTO.builder().message(ErrorMessages.VALIDATION_FAILED).build());
         }
 
 		String message = firstError.getField() + ": " + firstError.getDefaultMessage();
@@ -43,8 +46,14 @@ public class ControllerAdvice {
 	}
 
 	@ExceptionHandler(NotFoundException.class)
-	public ResponseEntity<ApiErrorResponseDTO> handleNotFoundException() {
+	public ResponseEntity<Void> handleNotFoundException() {
 		return ResponseEntity.notFound().build();
+	}
+
+	@ExceptionHandler(DuplicatedResourceException.class)
+	public ResponseEntity<ApiErrorResponseDTO> handleDuplicatedResourceException() {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(
+			ApiErrorResponseDTO.builder().message(ErrorMessages.RESOURCE_ALREADY_EXISTS).build());
 	}
 
 }

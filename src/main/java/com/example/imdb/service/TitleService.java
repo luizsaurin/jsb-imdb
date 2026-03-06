@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.example.imdb.advice.exception.BadRequestException;
+import com.example.imdb.advice.exception.DuplicatedResourceException;
 import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.title.request.CreateTitleRequestDTO;
 import com.example.imdb.dto.title.request.UpdateTitleRequestDTO;
@@ -37,10 +37,10 @@ public class TitleService {
 	
 	@Async
 	public void createMany(List<CreateTitleRequestDTO> requestList) {
-		log.info("[START] Creating titles with data: {}", requestList);
+		log.info("Creating titles with data: {}", requestList);
 
 		if (requestList == null || requestList.isEmpty()) {
-			log.info("[END] Request list is null or empty");
+			log.info("Request list is null or empty");
 			return;
 		}
 
@@ -48,59 +48,49 @@ public class TitleService {
 
 		requestList.forEach(item -> { 
 
-			if (titleRepository.existsByName(item.getName())) {
-				return;
-			}
+			if (titleRepository.existsByName(item.getName())) return;
 
 			entitiesToSave.add(titleMapper.toEntity(item));
 		});
 
 		
 		if (entitiesToSave == null || entitiesToSave.isEmpty()) {
-			log.info("[END] No title left to save");
+			log.info("No title left to save");
 			return;
 		}
 		
 		titleRepository.saveAll(entitiesToSave);
 
-		log.info("[END] {} records saved", entitiesToSave.size());
+		log.info("[{}] records saved", entitiesToSave.size());
 	}
 
 	public CreateTitleResponseDTO create(CreateTitleRequestDTO request) {
-		log.info("[START] Creating title with data: {}", request);
+		log.info("Creating title with data: {}", request);
 
 		if (titleRepository.existsByName(request.getName())) {
-			String message = String.format("Title with name %s already exists", request.getName());
-			log.info("[END] {}", message);
-			throw new BadRequestException(message);
+			log.info("Title with name [{}] already exists", request.getName());
+			throw new DuplicatedResourceException();
 		}
 
-		CreateTitleResponseDTO response = titleMapper.toCreateTitleResponseDTO(
-			titleRepository.save(titleMapper.toEntity(request)));
-		log.info("[END] Response: {}", response);
-		
-		return response;
+		return titleMapper.toCreateTitleResponseDTO(titleRepository.save(titleMapper.toEntity(request)));
 	}
 	
 	public FindTitleByIdResponseDTO findById(Long id) {
-		log.info("[START] Searching Title with id [{}]", id);
+		log.info("Searching title with id [{}]", id);
 		
 		Optional<TitleEntity> optional = titleRepository.findById(id);
 		
 		if (optional.isEmpty()) {
-			log.info("[END] Title with id [{}] not found", id);
+			log.info("Title with id [{}] not found", id);
 			throw new NotFoundException();
 		}
 		
-		FindTitleByIdResponseDTO response = titleMapper.toFindTitleByIdResponseDTO(optional.get());
-		log.info("[END] Response: {}", response);
-		
-		return response;
+		return titleMapper.toFindTitleByIdResponseDTO(optional.get());
 	}
 	
 	public Page<FindAllTitlesResponseDTO> findAll(Pageable pageable, String name, Integer releaseYearGte, 
 		Integer releaseYearLte) {
-		log.info("[START] Searching Titles with {} and params name [{}], releaseYearGte [{}], releaseYearLte [{}]", 
+		log.info("Searching Titles with {} and params name [{}], releaseYearGte [{}], releaseYearLte [{}]", 
 		pageable, name, releaseYearGte, releaseYearLte);
 
 		Specification<TitleEntity> spec = Specification.allOf(
@@ -112,33 +102,30 @@ public class TitleService {
 		Page<FindAllTitlesResponseDTO> page = titleRepository.findAll(spec, pageable)
 			.map(titleMapper::toFindAllTitlesResponseDTO);
 		
-		log.info("[END] Found {} records", page.getTotalElements());
+		log.info("[{}] records found", page.getTotalElements());
 
 		return page;
 	}
 
 	public UpdateTitleResponseDTO update(Long id, UpdateTitleRequestDTO request) {
-		log.info("[START] Updating Title id [{}] with data {}", id, request);
+		log.info("Updating title with id [{}] using data {}", id, request);
 
 		Optional<TitleEntity> optional = titleRepository.findById(id);
 
 		if (optional.isEmpty()) {
-			log.info("[END] Title with id [{}] not found", id);
+			log.info("Title with id [{}] not found", id);
 			throw new NotFoundException();
 		}
 
-		UpdateTitleResponseDTO response = titleMapper.toUpdateTitleResponseDTO(
+		return titleMapper.toUpdateTitleResponseDTO(
 			titleRepository.save(titleMapper.toEntity(optional.get(), request)));
-		log.info("[END] Response: {}", response);
-		
-		return response;
 	}
 
 	public void delete(Long id) {
-		log.info("[START] Deleting Title id [{}]", id);
+		log.info("Deleting Title id [{}]", id);
 
 		if (!titleRepository.existsById(id)) {
-			log.info("[END] Title with id [{}] not found", id);
+			log.info("Title with id [{}] not found", id);
 			throw new NotFoundException();
 		}
 

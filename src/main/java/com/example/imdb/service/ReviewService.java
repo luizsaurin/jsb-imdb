@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.imdb.advice.exception.BadRequestException;
+import com.example.imdb.advice.exception.DuplicatedResourceException;
 import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.review.request.CreateReviewRequestDTO;
 import com.example.imdb.dto.review.response.CreateReviewResponseDTO;
@@ -28,43 +29,35 @@ public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	
 	public CreateReviewResponseDTO create(CreateReviewRequestDTO request) {
-		log.info("[START] Creating review with data {}", request);
+		log.info("Creating review with data {}", request);
 
 		Optional<TitleEntity> optionalTitle = titleRepository.findById(request.getTitleId());
 
 		if (optionalTitle.isEmpty()) {
-			String message = String.format("Could not find Title with id %s", request.getTitleId());
-			log.info("[END] {}", message);
-			throw new BadRequestException(message);
+			log.info("Could not find Title with id {}", request.getTitleId());
+			throw new BadRequestException("title with id " + request.getTitleId());
 		}
 		
 		if (reviewRepository.existsByEmailAndTitle_Id(request.getEmail(), request.getTitleId())) {
-			String message = String.format("User with email [%s] already posted a review for this title", 
-				request.getEmail());
-			log.info("[END] {}", message);
-			throw new BadRequestException(message);
+			log.info("User with email [{}] already posted a review for title id [{}]", 
+				request.getEmail(), request.getTitleId());
+			throw new DuplicatedResourceException();
 		}
 
-		CreateReviewResponseDTO response = reviewMapper.toCreateReviewResponseDTO(
+		return reviewMapper.toCreateReviewResponseDTO(
 			reviewRepository.save(reviewMapper.toEntity(request, optionalTitle.get())));
-		log.info("[END] Response: {}", response);
-
-		return response;
 	}
 
 	public FindReviewByIdResponseDTO findById(Long id) {
-		log.info("[START] Searching review with id [{}]", id);
+		log.info("Searching review with id [{}]", id);
 		
 		Optional<ReviewEntity> optional = reviewRepository.findById(id);
 		
 		if (optional.isEmpty()) {
-			log.info("[END] Review with id [{}] not found", id);
+			log.info("Review with id [{}] not found", id);
 			throw new NotFoundException();
 		}
 		
-		FindReviewByIdResponseDTO response = reviewMapper.toFindReviewByIdResponseDTO(optional.get());
-		log.info("[END] Response: {}", response);
-		
-		return response;
+		return reviewMapper.toFindReviewByIdResponseDTO(optional.get());
 	}
 }
