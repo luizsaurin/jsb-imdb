@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.imdb.advice.exception.BadRequestException;
-import com.example.imdb.advice.exception.DuplicatedResourceException;
 import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.review.request.CreateReviewRequestDTO;
 import com.example.imdb.dto.review.response.CreateReviewResponseDTO;
@@ -34,14 +33,11 @@ public class ReviewService {
 		Optional<TitleEntity> optionalTitle = titleRepository.findById(request.getTitleId());
 
 		if (optionalTitle.isEmpty()) {
-			log.info("Could not find Title with id {}", request.getTitleId());
-			throw new BadRequestException("title with id " + request.getTitleId());
+			throw new BadRequestException("Title with id [{}] not found", request.getTitleId());
 		}
 		
 		if (reviewRepository.existsByEmailAndTitle_Id(request.getEmail(), request.getTitleId())) {
-			log.info("User with email [{}] already posted a review for title id [{}]", 
-				request.getEmail(), request.getTitleId());
-			throw new DuplicatedResourceException();
+			throw new BadRequestException("This user already posted a review for title id [{}]", request.getTitleId());
 		}
 
 		return reviewMapper.toCreateReviewResponseDTO(
@@ -54,8 +50,7 @@ public class ReviewService {
 		Optional<ReviewEntity> optional = reviewRepository.findById(id);
 		
 		if (optional.isEmpty()) {
-			log.info("Review with id [{}] not found", id);
-			throw new NotFoundException();
+			throw new NotFoundException("Review with id [{}] not found", id);
 		}
 		
 		return reviewMapper.toFindReviewByIdResponseDTO(optional.get());

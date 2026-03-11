@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.example.imdb.advice.exception.DuplicatedResourceException;
+import com.example.imdb.advice.exception.BadRequestException;
 import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.title.request.CreateTitleRequestDTO;
 import com.example.imdb.dto.title.request.UpdateTitleRequestDTO;
@@ -68,8 +68,7 @@ public class TitleService {
 		log.info("Creating title with data: {}", request);
 
 		if (titleRepository.existsByName(request.getName())) {
-			log.info("Title with name [{}] already exists", request.getName());
-			throw new DuplicatedResourceException();
+			throw new BadRequestException("Title with name [{}] already exists", request.getName());
 		}
 
 		return titleMapper.toCreateTitleResponseDTO(titleRepository.save(titleMapper.toEntity(request)));
@@ -81,8 +80,7 @@ public class TitleService {
 		Optional<TitleEntity> optional = titleRepository.findById(id);
 		
 		if (optional.isEmpty()) {
-			log.info("Title with id [{}] not found", id);
-			throw new NotFoundException();
+			throw new NotFoundException("Title with id [{}] not found", id);
 		}
 		
 		return titleMapper.toFindTitleByIdResponseDTO(optional.get());
@@ -90,7 +88,7 @@ public class TitleService {
 	
 	public Page<FindAllTitlesResponseDTO> findAll(Pageable pageable, String name, Integer releaseYearGte, 
 		Integer releaseYearLte) {
-		log.info("Searching Titles with {} and params name [{}], releaseYearGte [{}], releaseYearLte [{}]", 
+		log.info("Searching title with {} and params name [{}], releaseYearGte [{}], releaseYearLte [{}]", 
 		pageable, name, releaseYearGte, releaseYearLte);
 
 		Specification<TitleEntity> spec = Specification.allOf(
@@ -113,8 +111,7 @@ public class TitleService {
 		Optional<TitleEntity> optional = titleRepository.findById(id);
 
 		if (optional.isEmpty()) {
-			log.info("Title with id [{}] not found", id);
-			throw new NotFoundException();
+			throw new NotFoundException("Title with id [{}] not found", id);
 		}
 
 		return titleMapper.toUpdateTitleResponseDTO(
@@ -122,11 +119,10 @@ public class TitleService {
 	}
 
 	public void delete(Long id) {
-		log.info("Deleting Title id [{}]", id);
+		log.info("Deleting title id [{}]", id);
 
 		if (!titleRepository.existsById(id)) {
-			log.info("Title with id [{}] not found", id);
-			throw new NotFoundException();
+			throw new NotFoundException("Title with id [{}] not found", id);
 		}
 
 		titleRepository.deleteById(id);
