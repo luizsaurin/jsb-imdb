@@ -2,12 +2,15 @@ package com.example.imdb.service;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.imdb.advice.exception.BadRequestException;
 import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.review.request.CreateReviewRequestDTO;
 import com.example.imdb.dto.review.response.CreateReviewResponseDTO;
+import com.example.imdb.dto.review.response.FindAllReviewsResponseDTO;
 import com.example.imdb.dto.review.response.FindReviewByIdResponseDTO;
 import com.example.imdb.entity.ReviewEntity;
 import com.example.imdb.entity.TitleEntity;
@@ -54,5 +57,16 @@ public class ReviewService {
 		}
 		
 		return reviewMapper.toFindReviewByIdResponseDTO(optional.get());
+	}
+
+	public Page<FindAllReviewsResponseDTO> findAll(Pageable pageable) {
+		log.info("Searching reviews with {}", pageable);
+
+		Page<FindAllReviewsResponseDTO> page = reviewRepository.findAll(pageable)
+			.map(reviewMapper::toFindAllReviewsResponseDTO);
+		
+		log.info("[{}] records found", page.getTotalElements());
+
+		return page;
 	}
 }

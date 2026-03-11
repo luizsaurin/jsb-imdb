@@ -88,7 +88,7 @@ public class TitleService {
 	
 	public Page<FindAllTitlesResponseDTO> findAll(Pageable pageable, String name, Integer releaseYearGte, 
 		Integer releaseYearLte) {
-		log.info("Searching title with {} and params name [{}], releaseYearGte [{}], releaseYearLte [{}]", 
+		log.info("Searching titles with {} and params name [{}], releaseYearGte [{}], releaseYearLte [{}]", 
 		pageable, name, releaseYearGte, releaseYearLte);
 
 		Specification<TitleEntity> spec = Specification.allOf(

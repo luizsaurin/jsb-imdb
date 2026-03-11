@@ -6,6 +6,7 @@ import org.mapstruct.ReportingPolicy;
 
 import com.example.imdb.dto.review.request.CreateReviewRequestDTO;
 import com.example.imdb.dto.review.response.CreateReviewResponseDTO;
+import com.example.imdb.dto.review.response.FindAllReviewsResponseDTO;
 import com.example.imdb.dto.review.response.FindReviewByIdResponseDTO;
 import com.example.imdb.entity.ReviewEntity;
 import com.example.imdb.entity.TitleEntity;
@@ -22,5 +23,8 @@ public interface ReviewMapper {
 	
 	@Mapping(source = "entity.title.id", target = "titleId")
 	FindReviewByIdResponseDTO toFindReviewByIdResponseDTO(ReviewEntity entity);
+	
+	@Mapping(source = "entity.title.id", target = "titleId")
+	FindAllReviewsResponseDTO toFindAllReviewsResponseDTO(ReviewEntity entity);
 	
 }

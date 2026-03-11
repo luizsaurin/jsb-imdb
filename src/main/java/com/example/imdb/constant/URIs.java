@@ -15,4 +15,5 @@ public class URIs {
 	
 	public static final String CREATE_REVIEW = "/reviews";
 	public static final String FIND_REVIEW_BY_ID = "/reviews/{id}";
+	public static final String FIND_ALL_REVIEWS = "/reviews";
 }
