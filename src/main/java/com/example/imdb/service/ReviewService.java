@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.imdb.advice.exception.BadRequestException;
@@ -17,6 +18,7 @@ import com.example.imdb.entity.TitleEntity;
 import com.example.imdb.mapper.ReviewMapper;
 import com.example.imdb.repository.ReviewRepository;
 import com.example.imdb.repository.TitleRepository;
+import com.example.imdb.specification.ReviewSpecifications;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,10 +61,18 @@ public class ReviewService {
 		return reviewMapper.toFindReviewByIdResponseDTO(optional.get());
 	}
 
-	public Page<FindAllReviewsResponseDTO> findAll(Pageable pageable) {
-		log.info("Searching reviews with {}", pageable);
+	public Page<FindAllReviewsResponseDTO> findAll(Pageable pageable, Long titleId, Integer ratingGte, 
+		Integer ratingLte) {
+		log.info("Searching reviews with {} and params titleId [{}], ratingGte [{}], ratingLte [{}]", 
+		pageable, titleId, ratingGte, ratingLte);
 
-		Page<FindAllReviewsResponseDTO> page = reviewRepository.findAll(pageable)
+		Specification<ReviewEntity> spec = Specification.allOf(
+			ReviewSpecifications.titleIdEquals(titleId),
+			ReviewSpecifications.ratingGte(ratingGte),
+			ReviewSpecifications.ratingLte(ratingLte)
+		);
+
+		Page<FindAllReviewsResponseDTO> page = reviewRepository.findAll(spec, pageable)
 			.map(reviewMapper::toFindAllReviewsResponseDTO);
 		
 		log.info("[{}] records found", page.getTotalElements());
