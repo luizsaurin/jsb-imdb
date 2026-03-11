@@ -1,4 +1,3 @@
--- DROP TABLE reviews;
 CREATE TABLE reviews (
 	rating int4 NULL,
 	created_at timestamptz(6) NOT NULL,
