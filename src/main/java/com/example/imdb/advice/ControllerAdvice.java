@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.imdb.advice.exception.BadRequestException;
 import com.example.imdb.advice.exception.NotFoundException;
-import com.example.imdb.constant.ErrorMessages;
 import com.example.imdb.dto.ApiErrorResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,7 @@ public class ControllerAdvice {
 
 		if (firstError == null) {
             return ResponseEntity.badRequest().body(
-				ApiErrorResponseDTO.builder().message(ErrorMessages.VALIDATION_FAILED).build());
+				ApiErrorResponseDTO.builder().message("Validation failed").build());
         }
 
 		String message = firstError.getField() + ": " + firstError.getDefaultMessage();
