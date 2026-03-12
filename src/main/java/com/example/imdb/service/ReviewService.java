@@ -94,4 +94,14 @@ public class ReviewService {
 		return reviewMapper.toUpdateReviewResponseDTO(
 			reviewRepository.save(reviewMapper.toEntity(optional.get(), request)));
 	}
+
+	public void delete(Long id) {
+		log.info("Deleting review id [{}]", id);
+
+		if (!reviewRepository.existsById(id)) {
+			throw new NotFoundException("Review with id [{}] not found", id);
+		}
+
+		reviewRepository.deleteById(id);
+	}
 }

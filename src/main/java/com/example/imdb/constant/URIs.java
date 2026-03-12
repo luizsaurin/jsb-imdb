@@ -17,4 +17,5 @@ public class URIs {
 	public static final String FIND_REVIEW_BY_ID = "/reviews/{id}";
 	public static final String FIND_REVIEWS = "/reviews";
 	public static final String UPDATE_REVIEW = "/reviews/{id}";
+	public static final String DELETE_REVIEW = "/reviews/{id}";
 }
