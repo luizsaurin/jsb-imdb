@@ -51,7 +51,7 @@ public class TitleController {
 		return ResponseEntity.ok(titleService.findById(id));
 	}
 
-	@GetMapping(URIs.FIND_ALL_TITLES)
+	@GetMapping(URIs.FIND_TITLES)
 	public ResponseEntity<Page<FindAllTitlesResponseDTO>> findAll(
 		@RequestParam(required = false) String name,
 		@RequestParam(required = false) Integer releaseYearGte,

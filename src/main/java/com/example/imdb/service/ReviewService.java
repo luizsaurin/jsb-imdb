@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 import com.example.imdb.advice.exception.BadRequestException;
 import com.example.imdb.advice.exception.NotFoundException;
 import com.example.imdb.dto.review.request.CreateReviewRequestDTO;
+import com.example.imdb.dto.review.request.UpdateReviewRequestDTO;
 import com.example.imdb.dto.review.response.CreateReviewResponseDTO;
 import com.example.imdb.dto.review.response.FindAllReviewsResponseDTO;
 import com.example.imdb.dto.review.response.FindReviewByIdResponseDTO;
+import com.example.imdb.dto.review.response.UpdateReviewResponseDTO;
 import com.example.imdb.entity.ReviewEntity;
 import com.example.imdb.entity.TitleEntity;
 import com.example.imdb.mapper.ReviewMapper;
@@ -78,5 +80,18 @@ public class ReviewService {
 		log.info("[{}] records found", page.getTotalElements());
 
 		return page;
+	}
+
+	public UpdateReviewResponseDTO update(Long id, UpdateReviewRequestDTO request) {
+		log.info("Updating review with id [{}] using data {}", id, request);
+
+		Optional<ReviewEntity> optional = reviewRepository.findById(id);
+
+		if (optional.isEmpty()) {
+			throw new NotFoundException("Review with id [{}] not found", id);
+		}
+
+		return reviewMapper.toUpdateReviewResponseDTO(
+			reviewRepository.save(reviewMapper.toEntity(optional.get(), request)));
 	}
 }
