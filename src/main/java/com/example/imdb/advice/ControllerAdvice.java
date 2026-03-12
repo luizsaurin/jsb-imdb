@@ -1,5 +1,7 @@
 package com.example.imdb.advice;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -49,6 +51,13 @@ public class ControllerAdvice {
 	public ResponseEntity<Void> handleNotFoundException(NotFoundException ex) {
 		log.warn(ex.getMessage());
 		return ResponseEntity.notFound().build();
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ApiErrorResponseDTO> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+		log.warn(ex.getMessage());
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(
+			ApiErrorResponseDTO.builder().message("Database constraint violation").build());
 	}
 
 }
