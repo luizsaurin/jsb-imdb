@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,7 @@ class TitleControllerTest {
 		ResponseEntity<CreateTitleResponseDTO> response = titleController.create(requestDto);
 
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertEquals(responseDto, response.getBody());
 		verify(titleService).create(requestDto);
 	}
 
@@ -57,8 +59,7 @@ class TitleControllerTest {
 	void shouldCreateManyTitles() {
 
 		List<CreateTitleRequestDTO> requestDto = List.of(
-				CreateTitleRequestDTO.builder().name("Star Wars").releaseYear(1977).build(),
-				CreateTitleRequestDTO.builder().name("Alien").releaseYear(1979).build());
+				CreateTitleRequestDTO.builder().name("Star Wars").releaseYear(1977).build());
 
 		doNothing().when(titleService).createMany(requestDto);
 
@@ -82,6 +83,7 @@ class TitleControllerTest {
 		ResponseEntity<FindTitleByIdResponseDTO> response = titleController.findById(titleId);
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(responseDto, response.getBody());
 		verify(titleService).findById(titleId);
 	}
 
@@ -92,7 +94,9 @@ class TitleControllerTest {
 		Integer releaseYearGteParam = null;
 		Integer releaseYearLteParam = null;
 		Pageable pageableParam = null;
-		Page<FindAllTitlesResponseDTO> responsePage = Page.empty();
+
+		FindAllTitlesResponseDTO responseDto = FindAllTitlesResponseDTO.builder().id(1L).name("Star Wars").build();
+		Page<FindAllTitlesResponseDTO> responsePage =new PageImpl<>(List.of(responseDto));
 
 		when(titleService.findAll(pageableParam, nameParam, releaseYearGteParam, releaseYearLteParam))
 				.thenReturn(responsePage);
@@ -101,6 +105,7 @@ class TitleControllerTest {
 				.findAll(nameParam, releaseYearGteParam, releaseYearLteParam, pageableParam);
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(responseDto.getName(), response.getBody().getContent().get(0).getName());
 		verify(titleService).findAll(pageableParam, nameParam, releaseYearGteParam, releaseYearLteParam);
 	}
 
@@ -110,7 +115,7 @@ class TitleControllerTest {
 		Long titleId = 1L;
 
 		UpdateTitleRequestDTO requestDto = UpdateTitleRequestDTO.builder()
-				.name("Star Wars Updated")
+				.name("Star Wars")
 				.build();
 
 		UpdateTitleResponseDTO responseDto = UpdateTitleResponseDTO.builder()
@@ -123,6 +128,7 @@ class TitleControllerTest {
 		ResponseEntity<UpdateTitleResponseDTO> response = titleController.update(titleId, requestDto);
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(responseDto, response.getBody());
 		verify(titleService).update(titleId, requestDto);
 	}
 
