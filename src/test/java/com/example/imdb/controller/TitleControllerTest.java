@@ -1,11 +1,6 @@
 package com.example.imdb.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -50,12 +45,12 @@ class TitleControllerTest {
 				.id(1L).name("Star Wars").releaseYear(1977)
 				.build();
 
-		when(titleService.create(any(CreateTitleRequestDTO.class))).thenReturn(responseDto);
+		when(titleService.create(requestDto)).thenReturn(responseDto);
 
 		ResponseEntity<CreateTitleResponseDTO> response = titleController.create(requestDto);
 
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
-		verify(titleService).create(any(CreateTitleRequestDTO.class));
+		verify(titleService).create(requestDto);
 	}
 
 	@Test
@@ -65,76 +60,83 @@ class TitleControllerTest {
 				CreateTitleRequestDTO.builder().name("Star Wars").releaseYear(1977).build(),
 				CreateTitleRequestDTO.builder().name("Alien").releaseYear(1979).build());
 
-		doNothing().when(titleService).createMany(anyList());
+		doNothing().when(titleService).createMany(requestDto);
 
 		ResponseEntity<Void> response = titleController.createMany(requestDto);
 
 		assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
-		verify(titleService).createMany(anyList());
+		verify(titleService).createMany(requestDto);
 	}
 
 	@Test
 	void shouldFindTitleById() {
 
+		Long titleId = 1L;
+
 		FindTitleByIdResponseDTO responseDto = FindTitleByIdResponseDTO.builder()
-				.id(1L).name("Star Wars").releaseYear(1977)
+				.id(titleId).name("Star Wars").releaseYear(1977)
 				.build();
 
-		when(titleService.findById(anyLong())).thenReturn(responseDto);
+		when(titleService.findById(titleId)).thenReturn(responseDto);
 
-		ResponseEntity<FindTitleByIdResponseDTO> response = titleController.findById(1L);
+		ResponseEntity<FindTitleByIdResponseDTO> response = titleController.findById(titleId);
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
-		verify(titleService).findById(anyLong());
+		verify(titleService).findById(titleId);
 	}
 
 	@Test
 	void shouldFindAllTitles() {
 
-		FindAllTitlesResponseDTO responseDto = FindAllTitlesResponseDTO.builder()
-				.id(1L).name("Star Wars")
-				.build();
+		String nameParam = null;
+		Integer releaseYearGteParam = null;
+		Integer releaseYearLteParam = null;
+		Pageable pageableParam = null;
+		Page<FindAllTitlesResponseDTO> responsePage = Page.empty();
 
-		Page<FindAllTitlesResponseDTO> responsePage = new PageImpl<>(List.of(responseDto));
-
-		when(titleService.findAll(any(), anyString(), anyInt(), anyInt())).thenReturn(responsePage);
+		when(titleService.findAll(pageableParam, nameParam, releaseYearGteParam, releaseYearLteParam))
+				.thenReturn(responsePage);
 
 		ResponseEntity<Page<FindAllTitlesResponseDTO>> response = titleController
-				.findAll("", 0, 0, null);
+				.findAll(nameParam, releaseYearGteParam, releaseYearLteParam, pageableParam);
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
-		verify(titleService).findAll(any(), anyString(), anyInt(), anyInt());
+		verify(titleService).findAll(pageableParam, nameParam, releaseYearGteParam, releaseYearLteParam);
 	}
 
 	@Test
 	void shouldUpdateTitle() {
+
+		Long titleId = 1L;
 
 		UpdateTitleRequestDTO requestDto = UpdateTitleRequestDTO.builder()
 				.name("Star Wars Updated")
 				.build();
 
 		UpdateTitleResponseDTO responseDto = UpdateTitleResponseDTO.builder()
-				.id(1L)
+				.id(titleId)
 				.name("Star Wars Updated")
 				.build();
 
-		when(titleService.update(anyLong(), any(UpdateTitleRequestDTO.class))).thenReturn(responseDto);
+		when(titleService.update(titleId, requestDto)).thenReturn(responseDto);
 
-		ResponseEntity<UpdateTitleResponseDTO> response = titleController.update(1L, requestDto);
+		ResponseEntity<UpdateTitleResponseDTO> response = titleController.update(titleId, requestDto);
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
-		verify(titleService).update(anyLong(), any(UpdateTitleRequestDTO.class));
+		verify(titleService).update(titleId, requestDto);
 	}
 
 	@Test
 	void shouldDeleteTitle() {
 
-		doNothing().when(titleService).delete(anyLong());
+		Long titleId = 1L;
 
-		ResponseEntity<Void> response = titleController.delete(1L);
+		doNothing().when(titleService).delete(titleId);
+
+		ResponseEntity<Void> response = titleController.delete(titleId);
 
 		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-		verify(titleService).delete(anyLong());
+		verify(titleService).delete(titleId);
 	}
 
 }
